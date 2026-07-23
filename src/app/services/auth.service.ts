@@ -29,8 +29,11 @@ export class AuthService {
   }
 
   renewPassword(email: string, encryptedPassword: string, info: string): Observable<any> {
+    // El endpoint valida @NotBlank sobre TODO el UserRequest (username/role/applicationApiKey),
+    // aunque el servicio solo use email+password. Se completan para pasar la validación (si no, 500).
     return this.http.post(`${this.securityApiRecetaliaUrl}/renew-password`,
-      { email, password: encryptedPassword, info });
+      { username: email, email, password: encryptedPassword,
+        role: 'ROLE_PHARMACEUTICAL_DIRECTOR', applicationApiKey: 'qf-recetalia-app', info });
   }
 
   requestReset(email: string, url: string): Observable<any> {
