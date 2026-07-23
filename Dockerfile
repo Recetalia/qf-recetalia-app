@@ -29,7 +29,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY default.conf /etc/nginx/conf.d/
 
 # Copy built Angular app
-COPY --from=build /app/dist/farmacias-recetalia-app/browser /usr/share/nginx/html
+COPY --from=build /app/dist/qf-recetalia-app/browser /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80
