@@ -1,7 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../../../../services/auth.service';
-import { PharmacyService } from '../../../../../services/pharmacy.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -11,16 +10,14 @@ import { Router } from '@angular/router';
 })
 export class SidebarComponent implements OnInit {
   @Input() isSidebarHidden = false;
-  @Output() sidebarToggle = new EventEmitter<boolean>(); // Notify parent to hide
+  @Output() sidebarToggle = new EventEmitter<boolean>();
   deferredPrompt: any;
-  pharmacyName = '';
-  userRole: string | null = null;
+  displayName = 'Químico Farmacéutico';
 
   constructor(
     private eRef: ElementRef,
     private router: Router,
     private authService: AuthService,
-    private pharmacyService: PharmacyService,
     @Inject(PLATFORM_ID) private platformId: object
   ) { }
 
@@ -28,56 +25,35 @@ export class SidebarComponent implements OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     window.addEventListener('beforeinstallprompt', (event: any) => {
-      event.preventDefault(); // Prevent automatic prompt
+      event.preventDefault();
       this.deferredPrompt = event;
     });
 
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    let payload: any;
-    try {
-      payload = JSON.parse(atob(token.split('.')[1]));
-    } catch {
-      return;
+    const user = this.authService.getCurrentUser();
+    if (user?.cjp) {
+      this.displayName = user.cjp;
     }
-    const email = payload?.mail ?? payload?.sub;
-    if (!email) return;
-
-    this.pharmacyService.getByEmail(email).subscribe({
-      next: (pharmacy: any) => {
-        this.pharmacyName = (pharmacy?.name ?? '').trim() || (pharmacy?.businessName ?? '').trim() || '';
-      },
-      error: () => { /* swallow */ }
-    });
-
-    this.authService.getCurrentUser().subscribe({
-      next: (user: any) => { if (user) this.userRole = user.role; },
-      error: () => { /* ignore */ },
-    });
   }
 
-  // Detect click outside the sidebar
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
     if (!this.eRef.nativeElement.contains(event.target) && !this.isSidebarHidden) {
-      this.sidebarToggle.emit(true); // emit true to hide
+      this.sidebarToggle.emit(true);
     }
   }
 
   closeSidebar() {
-    this.sidebarToggle.emit(true); // emit true to hide
+    this.sidebarToggle.emit(true);
+  }
+
+  logout() {
+    this.authService.logout();
   }
 
   promptInstall() {
     if (this.deferredPrompt) {
       this.deferredPrompt.prompt();
       this.deferredPrompt.userChoice.then((choiceResult: any) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('User accepted install prompt');
-        } else {
-          console.log('User dismissed the install prompt');
-        }
         this.deferredPrompt = null;
       });
     }

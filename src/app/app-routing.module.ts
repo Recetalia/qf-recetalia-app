@@ -6,18 +6,18 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () => import('./pages/application/home/home.module').then(h => h.HomeModule),
-    canActivate: [authGuard], // Ensure the user is authenticated
-    data: { roles: ['ROLE_PHARMACY', 'ROLE_PHARMACY_ADMIN'] }
-  },
-  {
-    path: 'register',
-    loadChildren: () => import('./pages/application/register/register.module').then(m => m.RegistergModule)
+    canActivate: [authGuard],
+    data: { roles: ['ROLE_PHARMACEUTICAL_DIRECTOR'] }
   },
   {
     path: 'login',
     loadChildren: () => import('./pages/application/login/login.module').then(l => l.LoginModule)
   },
-  { path: '**', redirectTo: 'login' } // Redirect any unknown path to the login
+  {
+    path: 'change-password',
+    loadChildren: () => import('./pages/application/change-password/change-password.module').then(m => m.ChangePasswordModule)
+  },
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({

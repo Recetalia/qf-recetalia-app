@@ -10,11 +10,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppComponent } from '../../../app.component';
-import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { PasswordModule } from 'primeng/password';
 
 @NgModule({
-  declarations: [LoginComponent, ForgotPasswordComponent],
+  declarations: [LoginComponent],
   imports: [
     CommonModule,
     LoginRoutingModule,
