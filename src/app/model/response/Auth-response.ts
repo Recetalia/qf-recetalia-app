@@ -11,4 +11,5 @@ export interface Answer {
     refreshToken: any
     username: string
     role: string
+    mustChangePassword?: boolean
 }

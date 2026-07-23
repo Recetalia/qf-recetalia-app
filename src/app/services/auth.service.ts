@@ -1,14 +1,11 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from "jwt-decode";
 import { environment } from '../../environments/environment';
-import { AuthResponse } from '../model/response/Auth-response';
+import { AuthResponse, Answer } from '../model/response/Auth-response';
 import { isPlatformBrowser } from '@angular/common';
-import { PharmacyService } from './pharmacy.service';
-import { PharmacyResponse } from '../model/response/pharmacy-response';
-import { FranchiseService } from './franchise.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,17 +15,22 @@ export class AuthService {
   private tokenSubject = new BehaviorSubject<string | null>(this.getToken());
   public token$ = this.tokenSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router, @Inject(PLATFORM_ID) private platformId: Object, private pharmacyService: PharmacyService, private franchiseService: FranchiseService) { }
+  constructor(private http: HttpClient, private router: Router, @Inject(PLATFORM_ID) private platformId: Object) { }
 
-  login(email: string, password: string, info: string): Observable<any> {
+  login(email: string, password: string, info: string): Observable<Answer> {
 
-    return this.http.post<any>(this.securityApiRecetaliaUrl + '/login', { email, password, info }).pipe(
+    return this.http.post<AuthResponse>(this.securityApiRecetaliaUrl + '/login', { email, password, info }).pipe(
       tap((response: AuthResponse) => {
-
         this.setToken(response.answer.token);
         this.setRole(response.answer.role);
-      })
+      }),
+      map((response: AuthResponse) => response.answer)
     );
+  }
+
+  renewPassword(email: string, encryptedPassword: string, info: string): Observable<any> {
+    return this.http.post(`${this.securityApiRecetaliaUrl}/renew-password`,
+      { email, password: encryptedPassword, info });
   }
 
   requestReset(email: string, url: string): Observable<any> {
@@ -97,36 +99,18 @@ export class AuthService {
     return null;
   }
 
-  getCurrentUser(): Observable<{ email: string; role: string; status: string; pharmacyId: string; franchiseId?: string } | null> {
+  getCurrentUser(): { email: string; role: string; cjp: string } | null {
     const token = this.getToken();
-    if (token) {
-      try {
-        const decodedToken: any = jwtDecode(token);
-        if (decodedToken.role === 'ROLE_PHARMACY_ADMIN') {
-          return this.franchiseService.getByAdminEmail(decodedToken.mail).pipe(
-            map((f: any) => ({
-              email: decodedToken.mail, role: decodedToken.role, status: 'ACTIVE',
-              pharmacyId: '', franchiseId: f?.id,
-            })),
-            catchError(() => new Observable<null>(o => o.next(null))),
-          );
-        }
-        return this.pharmacyService.getByEmail(decodedToken.mail).pipe(
-          map((data: PharmacyResponse) => ({
-            email: decodedToken.mail,
-            role: decodedToken.role,
-            status: data.status,
-            pharmacyId: data.id,
-            franchiseId: data.franchiseId,
-          }))
-        );
-      } catch (error) {
-        console.error('Error decoding token', error);
-        return new Observable(observer => observer.next(null));
-      }
+    if (!token) return null;
+    try {
+      const decoded: any = jwtDecode(token);
+      const mail: string = decoded?.mail ?? '';
+      const cjp = mail.includes('@') ? mail.substring(0, mail.indexOf('@')) : mail;
+      return { email: mail, role: decoded?.role ?? '', cjp };
+    } catch (error) {
+      console.error('Error decoding token', error);
+      return null;
     }
-    return new Observable(observer => observer.next(null));
   }
 
 }
-
