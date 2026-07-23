@@ -28,7 +28,9 @@ import { environment } from '../environments/environment';
     ReactiveFormsModule,
     HttpClientModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: environment.production,
+      // Desactivado a propósito: app interna del QF; el SW cacheaba bundles viejos
+      // y el fix no llegaba al navegador. Sin SW, cada carga trae el build actual.
+      enabled: false,
       registrationStrategy: 'registerWhenStable:30000'
     }),
 
