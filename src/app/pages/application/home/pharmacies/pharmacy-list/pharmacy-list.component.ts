@@ -21,6 +21,6 @@ export class PharmacyListComponent implements OnInit {
   }
 
   open(p: PharmacyResponse) {
-    this.router.navigate(['/farmacias', p.id, 'recetas-verdes']);
+    this.router.navigate(['/farmacias', p.id, 'recetas-verdes'], { queryParams: { name: p.name } });
   }
 }

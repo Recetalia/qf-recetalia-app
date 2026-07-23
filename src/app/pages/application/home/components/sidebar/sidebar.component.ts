@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnInit, Output, PLATFORM_ID } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../../../../services/auth.service';
 import { Router } from '@angular/router';
@@ -15,7 +15,6 @@ export class SidebarComponent implements OnInit {
   displayName = 'Químico Farmacéutico';
 
   constructor(
-    private eRef: ElementRef,
     private router: Router,
     private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: object
@@ -35,12 +34,9 @@ export class SidebarComponent implements OnInit {
     }
   }
 
-  @HostListener('document:click', ['$event'])
-  handleClickOutside(event: Event) {
-    if (!this.eRef.nativeElement.contains(event.target) && !this.isSidebarHidden) {
-      this.sidebarToggle.emit(true);
-    }
-  }
+  // Se quitó el @HostListener('document:click') que auto-cerraba el sidebar en
+  // cualquier click: peleaba con el toggle del header y lo dejaba trabado sin
+  // poder reabrir. Ahora abre/cierra solo con el botón del header.
 
   closeSidebar() {
     this.sidebarToggle.emit(true);

@@ -5,13 +5,13 @@
     </div>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeSidebar()">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
                 <i class="fas fa-shop"></i> <span>Mis farmacias</span>
             </a>
         </li>
         <!-- Spacer to push "Salir" to the bottom -->
         <li class="nav-item mt-auto">
-            <a class="nav-link" (click)="logout(); closeSidebar()">
+            <a class="nav-link" (click)="logout()">
                 <i class="fas fa-shield"></i> <span>Salir</span>
             </a>
         </li>

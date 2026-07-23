@@ -1,5 +1,9 @@
 <div class="container mt-4">
-  <h4>Recetas verdes dispensadas</h4>
+  <a routerLink="/" class="d-inline-block mb-2" style="cursor:pointer;">
+    <i class="fas fa-arrow-left"></i> Volver a mis farmacias
+  </a>
+  <h4 *ngIf="pharmacyName">{{ pharmacyName }} — recetas verdes dispensadas</h4>
+  <h4 *ngIf="!pharmacyName">Recetas verdes dispensadas</h4>
   <div class="d-flex align-items-center gap-2 mb-3">
     <p-calendar [(ngModel)]="rangeDates" selectionMode="range" dateFormat="dd/mm/yy"
                 placeholder="Rango de fechas" [showButtonBar]="true"></p-calendar>

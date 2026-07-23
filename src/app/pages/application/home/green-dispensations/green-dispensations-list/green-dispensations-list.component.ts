@@ -9,6 +9,7 @@ import { DispensationSearchRow } from '../../../../../model/response/dispensatio
 })
 export class GreenDispensationsListComponent implements OnInit {
   pharmacyId!: string;
+  pharmacyName = '';
   rows: DispensationSearchRow[] = [];
   totalRecords = 0;
   loading = false;
@@ -20,6 +21,7 @@ export class GreenDispensationsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.pharmacyId = this.route.snapshot.paramMap.get('pharmacyId')!;
+    this.pharmacyName = this.route.snapshot.queryParamMap.get('name') ?? '';
   }
 
   load(event: any) {
