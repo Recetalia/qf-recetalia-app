@@ -1,0 +1,32 @@
+<div [ngClass]="{'sidebar-wrapper': true, 'sidebar-hidden': isSidebarHidden}">
+    <div class="sidebar-user" *ngIf="pharmacyName">
+        <i class="pi pi-shop"></i>
+        <span>{{ pharmacyName }}</span>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link" routerLink="profile" routerLinkActive="active" (click)="closeSidebar()">
+                <i class="fas fa-user"></i> <span>Mi Perfil</span>
+            </a>
+        </li>
+        <li class="nav-item" *ngIf="userRole === 'ROLE_PHARMACY' || userRole === 'ROLE_PHARMACY_ADMIN'">
+            <a class="nav-link" routerLink="dashboard" routerLinkActive="active" (click)="closeSidebar()">
+                <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+            </a>
+        </li>
+        <a class="nav-link" routerLink="dispensations" routerLinkActive="active" (click)="closeSidebar()">
+            <i class="fas fa-capsules"></i> <span>Dispensaciones</span>
+        </a>
+        <!--<li class="nav-item">
+            <a class="nav-link" (click)="promptInstall()">
+                <i class="fas fa-cog"></i> <span>Instalar en dispositivo</span>
+            </a>
+        </li>-->
+        <!-- Spacer to push "Salir" to the bottom -->
+        <li class="nav-item mt-auto">
+            <a class="nav-link" href="login">
+                <i class="fas fa-shield"></i> <span>Salir</span>
+            </a>
+        </li>
+    </ul>
+</div>

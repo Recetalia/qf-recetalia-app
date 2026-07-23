@@ -1,0 +1,20 @@
+.content {
+	margin-left: 215px;
+	transition: margin-left 0.3s ease;
+}
+
+.content-expanded {
+	margin-left: 58px;
+}
+
+@media (max-width: 575.98px) {
+	.content-expanded {
+		margin-left: 0px;
+	}
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+	.content-expanded {
+		margin-left: 0px;
+	}
+}

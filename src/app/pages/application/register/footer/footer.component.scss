@@ -1,0 +1,38 @@
+@import '../../../../../scss/variable';
+
+
+
+.bg-color4 {
+    background-color: $color_ten;
+}
+
+.section-spacing {
+    padding: 50px 0px;
+}
+
+.bg-color5 {
+    background-color: $color_eleven;
+}
+
+.footer-widget p {
+    margin-bottom: 60px;
+}
+
+.footer-widget h4, .footer-widget h5, .footer-widget li, .footer-widget li a, .footer-widget p {
+    color: $color_two;
+}
+
+p, span, a, ul, li {
+    font-weight: 400;
+    line-height: 30px;
+}
+
+.footer-intro-container a {
+    color: $color_eight;
+}
+
+p, span, a, ul, li {
+    color: $cool_four;
+    font-weight: 400;
+    line-height: 30px;
+}

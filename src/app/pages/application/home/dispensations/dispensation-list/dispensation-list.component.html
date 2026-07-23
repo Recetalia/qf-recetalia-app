@@ -1,0 +1,136 @@
+<div class="error-banner" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<!-- Filters -->
+<div class="row g-3 mb-3">
+    <div class="col-12 col-md-4 col-lg-3">
+        <label>Buscar</label>
+        <input
+            type="text"
+            pInputText
+            class="w-100"
+            placeholder="Buscar (codigo, paciente...)"
+            (input)="onContainsInput($any($event.target).value)"
+        />
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-3">
+        <label>Dispensador</label>
+        <p-dropdown
+            [options]="dispenserOptions"
+            [filter]="true"
+            [showClear]="true"
+            placeholder="Dispensador"
+            [style]="{ width: '100%' }"
+            [(ngModel)]="selectedDispenserId"
+            (onChange)="onDispenserSelect($event.value)"
+        >
+        </p-dropdown>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-3">
+        <label>Laboratorio (DNMA)</label>
+        <p-dropdown
+            [options]="laboratoryOptions"
+            [filter]="true"
+            [showClear]="true"
+            placeholder="Laboratorio (DNMA)"
+            [style]="{ width: '100%' }"
+            [(ngModel)]="selectedLaboratoryId"
+            (onChange)="onLaboratorySelect($event.value)"
+        >
+        </p-dropdown>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-3">
+        <label>Rango de fechas</label>
+        <p-calendar
+            selectionMode="range"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [(ngModel)]="rangeDates"
+            (onSelect)="onDateSelect()"
+        >
+        </p-calendar>
+        <div style="position: relative" *ngIf="rangeDates && rangeDates.length === 2 && rangeDates[0] && rangeDates[1]">
+            <span class="reset-data" (click)="clearDateRange()">X</span>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-3">
+        <label>Tipo de receta</label>
+        <p-dropdown
+            [options]="condvtaOptions"
+            [showClear]="true"
+            placeholder="Tipo de receta"
+            [style]="{ width: '100%' }"
+            [(ngModel)]="selectedCondvtaId"
+            (onChange)="onCondvtaSelect($event.value)"
+        >
+        </p-dropdown>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-3" *ngIf="hasMultipleBranches">
+        <label>SUCURSAL</label>
+        <p-dropdown [options]="branchOptions" [(ngModel)]="selectedBranchId" optionLabel="label" optionValue="value"
+            [ngModelOptions]="{standalone: true}" (onChange)="onBranchChange()" placeholder="Todas las sucursales"
+            [style]="{ width: '100%' }"></p-dropdown>
+    </div>
+
+    <div class="d-flex justify-content-end mb-2 gap-2">
+        <button class="btn btn-outline-secondary" (click)="onExportExcel()">
+            Exportar Excel
+        </button>
+        <button class="btn btn-outline-secondary" (click)="onExportPdf()">
+            Exportar PDF
+        </button>
+    </div>
+</div>
+
+<!-- keep the p-table as you already have it -->
+
+<p-table [value]="rows" [lazy]="true" [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords"
+  [loading]="loading" [rowsPerPageOptions]="[10,25,50,100]" [responsiveLayout]="'scroll'"
+  (onLazyLoad)="loadDispensations($event)" dataKey="dispensationId" class="custom-table">
+
+  <ng-template pTemplate="paginatorleft">
+    <span class="paginator-count" *ngIf="totalRecords > 0">
+      Mostrando {{ pageIndex * pageSize + 1 }}-{{ pageIndex * pageSize + rows.length }} de {{ totalRecords }} ítems
+    </span>
+    <span class="paginator-count" *ngIf="totalRecords === 0">0 ítems</span>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="prescriptionCode">PRESCRIPCION<p-sortIcon field="prescriptionCode"></p-sortIcon></th>
+      <th *ngIf="hasMultipleBranches">Sucursal</th>
+      <th>Paciente</th>
+      <th>MEDICAMENTO</th>
+      <th>Cantidad</th>
+      <th pSortableColumn="dispensationCreatedAt">Fecha disp. <p-sortIcon field="dispensationCreatedAt"></p-sortIcon>
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-r>
+    <tr class="clickable-row" [ngClass]="{
+    'back_green': (r.condvtaId ?? 0) == 11,
+    'back_orange': (r.condvtaId ?? 0) == 12
+  }" (click)="openDispensation(r)" (keydown.enter)="openDispensation(r)" tabindex="0" role="button"
+      aria-label="Abrir detalle de dispensacion">
+      <td>{{ r.prescriptionCode }}</td>
+      <td *ngIf="hasMultipleBranches">{{ r.pharmacyName }}</td>
+      <td>
+        {{ r.patientName }} {{ r.patientLastName }} <br>
+        {{ r.patientDocument | document:'type' }} {{ r.patientDocument | document:'number' }}
+      </td>
+      <td>{{ r.dispensationProductName || '—' }}</td>
+      <td>{{ r.dispensationQty }} {{ r.dispensationQty === 1 ? 'caja' : 'cajas' }}</td>
+      <td>{{ r.dispensationCreatedAt | date:'yyyy-MM-dd HH:mm' }} <br>
+        <i class="dot" [ngClass]="{'warning': r.dispensationStatus === 'AVAILABLE',
+                                    'success': r.dispensationStatus === 'DISPENSED',
+                                    'alert': r.dispensationStatus === 'CANCELLED'}"></i>
+        {{ getStatusLabel(r.dispensationStatus) }} por:{{ r.pharmacyDispenserName }} {{ r.pharmacyDispenserLastName }}
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

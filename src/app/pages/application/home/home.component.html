@@ -1,0 +1,11 @@
+<app-header-home (toggleSidebar)="toggleSidebar()"></app-header-home>
+
+<div class="d-flex">
+  <app-sidebar [isSidebarHidden]="isSidebarHidden" (sidebarToggle)="setSidebarHidden($event)">
+  </app-sidebar>
+
+  <div class="content container" [ngClass]="{ 'content-expanded': isSidebarHidden }"
+    [style.background-color]="isDispensationsRoute ? 'white' : ''" style="max-width: 100%">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+# Node modules (we'll install fresh inside the container)
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+out-tsc
+
+# Environment files
+*.env
+*.local
+
+# Logs
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+*.log
+
+# IDE/editor configs
+.vscode
+.idea
+*.swp
+*.swo
+*.bak
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+.dockerignore
+
+# Docker artifacts
+Dockerfile
+
+# Cache
+.cache
+.angular
+coverage
+

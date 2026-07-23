@@ -1,0 +1,131 @@
+<div class="container" style="max-width: 665px;">
+  <!-- Card to search for patient -->
+  <div class="card mb-3 mt-3" *ngIf="!isPatientSelected">
+    <div class="card-body">
+      <div class="label">BUSCAR PACIENTE</div>
+      <div class="mt-3">
+        <div class="form-group">
+          <label for="prescriptions-create-1" class="form-label">Paciente</label>
+          <p-dropdown [options]="filteredPatients" [(ngModel)]="selectedPatient" optionLabel="displayLabel"
+            placeholder="Seleccionar o Crear Paciente" (onChange)="onPatientSelect($event)" [filter]="true"
+            [showClear]="true" [virtualScroll]="true" [itemSize]="30" (onFilter)="filterPatients($event)"
+            [autoDisplayFirst]="false">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card to show selected patient details -->
+  <div class="card mb-3 mt-3" *ngIf="isPatientSelected">
+    <div class="main-data mx-3 mt-3">
+      <div class="px-2 avatar-circle">
+        <b-avatar variant="light" size="7rem"></b-avatar>
+      </div>
+      <div>
+        <div class="d-flex justify-content-between">
+          <div>
+            <div class="label">PACIENTE</div>
+            <h2>{{ selectedPatient?.name }} {{ selectedPatient?.lastname }}</h2>
+            <div>
+              <i class="pi pi-card-user-2"></i> {{ selectedPatient?.document?.type?.trim()}}
+              {{selectedPatient?.document?.number?.trim() }}
+            </div>
+          </div>
+          <div>
+            <div class="btn btn-sm" (click)="toggleCollapse()" [attr.aria-controls]="'clientDataCollpsed'"
+              [attr.aria-expanded]="isCollapsed">
+              <i class="pi pi_close"></i>
+            </div>
+          </div>
+        </div>
+        <div id="clientDataCollpsed" class="text-secondary m-0 mt-3 collapse" [class.show]="isCollapsed">
+          <div class="client-data">
+            <div>
+              <i class="pi pi-phone"></i> {{ selectedPatient?.phone?.international }}
+            </div>
+            <div>
+              <i class="pi pi-envelope"></i> {{ selectedPatient?.email }}
+            </div>
+            <div>
+              <i class="pi pi-calendar"></i> {{ selectedPatient?.birthdate }}
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-6">
+              <button class="btn btn-xs btn-outline-secondary w-100" (click)="editPatient(selectedPatient?.id)">
+                <i class="pi pi-user-edit"></i> Editar <br> paciente
+              </button>
+            </div>
+            <div class="col-6">
+              <button class="btn btn-xs btn-outline-danger w-100" (click)="deselectPatient()">
+                <i class="pi pi-user-minus"></i> Desmarcar <br> paciente
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="btn btn-block" (click)="toggleCollapse()" [attr.aria-controls]="'clientDataCollpsed'"
+      [attr.aria-expanded]="isCollapsed" role="button">
+      <div class="pi" [class.pi-angle-up]="isCollapsed" [class.pi-angle-down]="!isCollapsed"></div>
+    </div>
+  </div>
+
+  <!-- Prescription Cards -->
+  <div *ngFor="let prescription of prescriptionsRequest; let i = index" class="card mb-3">
+    <div class="card-body">
+      <button class="btn btn-default btn-remove" (click)="removePrescription(i)">
+        <i class="fa fa-times"></i>
+      </button>
+      <div class="product-card">
+        <div class="product-data">
+          <i *ngIf="prescription.durationUnit === 'Meses'" class="pi pi-hourglass"></i>
+          <!--<span>{{ prescription.productType }}</span>-->
+          <h2 class="m-0">{{ prescription.productName }}</h2>
+          <!--div class="text-primary">
+            <small>{{ prescription.affections || 'Sin afecciones registradas' }}</small>
+          </div-->
+          <div class="text-primary">
+            <small>{{ prescription.dosificationType }}</small>
+          </div>
+        </div>
+
+        <div class="row mt-3">
+          <div class="col-6 col-md-4">
+            <div class="label">Dosis</div>
+            <div>{{ prescription.dose || 'N/A' }} {{ prescription.doseUnit || '' }}</div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="label">Frecuencia</div>
+            <div>{{ prescription.frecuency || 'N/A' }} {{ prescription.frecuencyUnit || '' | translateUnit }}</div>
+          </div>
+          <div class="col-12 col-md-4">
+            <div class="label">Vencimiento</div>
+            <div>{{ prescription.expireAt | date: 'dd-MM-yyyy' }}</div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Medication Button -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <button class="btn btn-success btn-block" style="width: 100%;" (click)="openGetMedecine()">Agregar
+        medicamento</button>
+    </div>
+  </div>
+
+
+  @if (selectedPatient != null && prescriptionsRequest.length > 0) {
+  <div class="card mb-3">
+    <div class="card-body">
+      <button class="btn btn-primary btn-block w-100" (click)="submitPrescription()">Prescribir</button>
+    </div>
+  </div>
+  }
+
+</div>

@@ -1,0 +1,11 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container-fluid">
+    <span (click)="onToggleSidebar()">
+      <i class="pi pi-bars"></i>
+      <button class="btn toggle"></button>
+    </span>
+
+    <button class="btn btn-success" (click)="redirectToAdd()" *ngIf="!isSearchPage && !isChainAdmin">Buscar Prescripción</button>
+
+  </div>
+</nav>

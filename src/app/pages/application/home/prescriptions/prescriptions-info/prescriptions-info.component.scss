@@ -1,0 +1,13 @@
+.badge {
+    font-size: 1.5rem;
+    &.AVAILABLE {
+        background-color: #ffc107;
+    }
+    &.PENDING {
+         background-color: #7c7c7c;
+    }
+    &.DISPENSED {
+        background-color: #18cc6c;
+    }
+}
+

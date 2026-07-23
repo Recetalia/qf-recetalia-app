@@ -1,0 +1,49 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'scss/variable';
+@import 'primeicons/primeicons.css';
+@import 'primeng/resources/themes/lara-light-blue/theme.css'; // or any theme you prefer
+@import 'primeng/resources/primeng.css';
+
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: $color_one;
+
+  .back_green {
+    background-color: #00800024;
+  }
+
+  .back_orange {
+    background-color: #f0b30a38;
+  }
+
+
+  a {
+    color: #12bcec;
+  }
+
+  .btn-success, .btn-primary {
+
+    color: #fff !important;
+    background-color: #7ad6cb;
+    border-color: #7ad6cb !important;
+
+    &:hover {
+      background-color: #5db3a9;
+    }
+  }
+
+  .themeix-header-navigation {
+    background-color: white;
+  }
+  h4 {
+    color: #5db3a9;
+    text-align: center;
+  }  
+}

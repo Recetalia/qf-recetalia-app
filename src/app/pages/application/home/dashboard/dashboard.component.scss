@@ -1,0 +1,18 @@
+:host { display:block; max-width:100%; }
+.dashboard { padding:16px; box-sizing:border-box; overflow-x:hidden; }
+.dashboard *, .dashboard *::before, .dashboard *::after { box-sizing:border-box; }
+.period-bar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+.period-bar .preset { border:1px solid #cfd8e3; background:#fff; border-radius:6px; padding:6px 12px; cursor:pointer; }
+.period-bar .preset.on { background:#22a06b; color:#fff; border-color:#22a06b; }
+.period-bar .custom { display:flex; gap:8px; flex-wrap:wrap; }
+.kpi-card { display:inline-block; min-width:200px; background:#fff; border:1px solid #e5e9ef; border-radius:8px; padding:16px; margin-bottom:16px; }
+.kpi-value { font-size:28px; font-weight:700; color:#243; } .kpi-label { font-size:12px; color:#789; }
+.kpi-delta { font-size:12px; font-weight:600; margin-top:6px; } .kpi-delta.up{color:#1a8f5a} .kpi-delta.down{color:#c0392b} .kpi-delta.flat{color:#94a3b8}
+.kpi-delta .ref { color:#a0aab5; font-weight:400; }
+.chart-wide, .chart-box { background:#fff; border:1px solid #e5e9ef; border-radius:8px; padding:12px; margin-bottom:16px; min-width:0; overflow:hidden; display:flex; flex-direction:column; }
+.chart-wide h3, .chart-box h3 { margin:0 0 8px; font-size:14px; }
+.chart-wide { height:300px; } .chart-box { height:320px; }
+.chart-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:16px; }
+.chart-wide ::ng-deep p-chart, .chart-box ::ng-deep p-chart { display:block; position:relative; flex:1 1 auto; min-height:0; width:100%; }
+.dashboard ::ng-deep canvas { max-width:100% !important; }
+.state { padding:24px; text-align:center; color:#789; } .state.error { color:#c0392b; }
