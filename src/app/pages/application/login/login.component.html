@@ -5,21 +5,19 @@
         <img src="../../../assets/images/logos/logo.png" alt="">
       </div>
       <div class="col-12">
-        <h3>Ingreso de Farmacias</h3>
+        <h3>Ingreso Químico Farmacéutico</h3>
       </div>
     </div>
   </div>
   <div class="card-body">
     <form [formGroup]="ngForm" (ngSubmit)="onSubmit()">
       <div class="mb-4">
-        <!--<label for="username" class="form-label">Ingrese su email</label>-->
-        <input type="text" class="form-control" id="username" placeholder="Ingrese su email" formControlName="username">
-        <div *ngIf="usernameControl.touched && usernameControl.invalid" class="text-danger">
-          <p>Email es necesario!!</p>
+        <input type="text" class="form-control" id="cjp" placeholder="Ingrese su CJP" inputmode="text" formControlName="cjp">
+        <div *ngIf="cjpControl.touched && cjpControl.invalid" class="text-danger">
+          <p>El CJP es necesario!!</p>
         </div>
       </div>
       <div class="mb-1">
-        <!--<label for="password" class="form-label">Ingrese su contraseña</label>-->
         <input type="password" class="form-control" id="password" placeholder="Ingrese su contraseña" formControlName="password">
         <div *ngIf="passwordControl.touched && passwordControl.invalid" class="text-danger">
           <p>Password es necesario!!</p>
@@ -30,20 +28,9 @@
         {{ error }}
       </div>
 
-      <div class="row mb-1">
-        <div class="col-12">
-          <a routerLink="/login/forgot-password" style="font-size: 14px;">Olvidé mi contraseña</a>
-        </div>
-      </div>
-      <div class="row text-center">
+      <div class="row text-center mt-3">
         <div class="col-12">
           <button type="submit" class="btn btn-primary">Ingresar</button>
-        </div>
-        <div class="col-12">
-          <h4>¿Todavía no tenés una cuenta?</h4>
-        </div>
-        <div class="col-12">
-          <a routerLink="/register" style="font-size: 14px;">Registrate ahora!</a>
         </div>
       </div>
     </form>

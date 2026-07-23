@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, Renderer2, ViewEncapsulation, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, PLATFORM_ID, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
-import * as CryptoJS from 'crypto-js';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../../../environments/environment';
+import { generateDynamicInfo, encryptPassword } from '../../../shared/utils/crypto.util';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class LoginComponent {
   ngForm: FormGroup = new FormGroup({
-    username: new FormControl('', Validators.required),
+    cjp: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
   });
 
@@ -28,8 +29,8 @@ export class LoginComponent {
     }
   }
 
-  get usernameControl() {
-    return this.ngForm.get('username')!;
+  get cjpControl() {
+    return this.ngForm.get('cjp')!;
   }
 
   get passwordControl() {
@@ -37,70 +38,43 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    const dynamicInfo = this.generateDynamicInfo();  // Generate dynamicInfo
-    const encryptedPassword = this.encryptPassword(this.ngForm.get('password')?.value, dynamicInfo);
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("role");
+    }
+    const cjp = (this.ngForm.get('cjp')?.value ?? '').toString().trim();
+    const email = `${cjp}@${environment.qfEmailDomain}`;
+    const dynamicInfo = generateDynamicInfo();
+    const encryptedPassword = encryptPassword(this.ngForm.get('password')?.value, dynamicInfo);
 
-    // Call the login service with the encrypted password and dynamicInfo
-    this.authService.login(this.ngForm.get('username')?.value, encryptedPassword, dynamicInfo).subscribe(
-      (response) => {
-
-        this.router.navigate(['']);  // Redirect to home after successful login
+    this.authService.login(email, encryptedPassword, dynamicInfo).subscribe({
+      next: (answer) => {
+        if (answer?.mustChangePassword) {
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('qf_email', email);
+          }
+          this.router.navigate(['/change-password']);
+        } else {
+          this.router.navigate(['']);
+        }
       },
-      (error: HttpErrorResponse) => {
-        let errorMessage = 'An error occurred. Please contact technical support.';
-        // Check the error response and set the message accordingly
+      error: (error: HttpErrorResponse) => {
+        let errorMessage = 'CJP o contraseña incorrectos';
         if (error.error) {
           const response = error.error;
           if (response.status === 'ERROR') {
-            errorMessage = response.answer; // Use the error message from the server
-            if (errorMessage.includes('User not found')) {
-              errorMessage = 'The username is incorrect. Please try again.';
-            } else if (errorMessage.includes('Credencial')) {
-              errorMessage = 'The password is incorrect. Please try again.';
+            const serverMsg: string = response.answer;
+            if (typeof serverMsg === 'string' && serverMsg.includes('User not found')) {
+              errorMessage = 'El CJP es incorrecto. Intente nuevamente.';
+            } else if (typeof serverMsg === 'string' && serverMsg.includes('Credencial')) {
+              errorMessage = 'La contraseña es incorrecta. Intente nuevamente.';
             }
           }
         }
-
         this.openSnackBar(errorMessage, 'error');
         console.error('Login failed', error);
       }
-    );
-  }
-
-  // Function to generate the dynamicInfo (first 10 characters of a GUID)
-  generateDynamicInfo(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    }).slice(0, 10); // Return first 10 characters
-  }
-
-  // Function to ensure the key is 32 bytes (padding or truncating if needed)
-  padOrTruncateKey(key: string): string {
-    const maxLength = 32; // AES key must be 16, 24, or 32 bytes
-    if (key.length > maxLength) {
-      return key.slice(0, maxLength);  // Truncate if too long
-    } else {
-      return key.padEnd(maxLength, '0');  // Pad with '0' if too short
-    }
-  }
-
-  encryptPassword(password: string, dynamicInfo: string): string {
-    const commonKey = 'ahjsdfhjbqer56243';  // Your common decryption key
-    let finalKey = commonKey + dynamicInfo;
-    console.log(finalKey);
-    // Ensure finalKey is exactly 32 bytes long
-    finalKey = this.padOrTruncateKey(finalKey);
-
-    // Encrypt the password using AES
-    const encrypted = CryptoJS.AES.encrypt(password, CryptoJS.enc.Utf8.parse(finalKey), {
-      mode: CryptoJS.mode.ECB,
-      padding: CryptoJS.pad.Pkcs7
-    }).toString();
-
-    return encrypted;
+    });
   }
 
   openSnackBar(message: string, type: string) {
