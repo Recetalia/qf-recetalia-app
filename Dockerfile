@@ -20,7 +20,10 @@ ARG CONFIGURATION=production
 RUN npm run build -- --configuration=$CONFIGURATION
 
 # 2️⃣ Stage: NGINX Server
-FROM nginx:alpine
+# Pin exacto: el kernel viejo del .98 (3.10, CentOS7) + nginx:alpine 1.31.3 crashea
+# con `pwrite("/run/nginx.pid") Operation not permitted` (regresión seccomp/pwritev2
+# en kernels <4.x). 1.31.2 es la versión que corren los demás frontends OK.
+FROM nginx:1.31.2-alpine
 
 # Remove default config
 RUN rm /etc/nginx/conf.d/default.conf
