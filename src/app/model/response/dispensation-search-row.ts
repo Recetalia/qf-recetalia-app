@@ -57,4 +57,10 @@ export interface DispensationSearchRow {
   pharmacyName?: string | null;
 
   prescriptionSubstanceName?: string | null;
+
+  // D.T. (Director Técnico / QF) control ("firma")
+  dtControlAt?: string;
+  dtControlName?: string;
+  dtControlCjp?: string;
+  medicalProviderName?: string;
 }
