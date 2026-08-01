@@ -6,6 +6,7 @@ import { ApiResponse } from '../model/response/api-response';
 import { Page } from '../model/page';
 import { PharmacyResponse } from '../model/response/pharmacy-response';
 import { DispensationSearchRow } from '../model/response/dispensation-search-row';
+import { PharmaceuticalDirectorMeResponse } from '../model/response/pharmaceutical-director-me-response';
 
 @Injectable({ providedIn: 'root' })
 export class PharmaceuticalDirectorService {
@@ -26,6 +27,21 @@ export class PharmaceuticalDirectorService {
     if (opts.startDate) params = params.set('startDate', opts.startDate);
     if (opts.endDate) params = params.set('endDate', opts.endDate);
     return this.http.get<ApiResponse<Page<DispensationSearchRow>>>(`${this.base}/green-dispensations`, { params })
+      .pipe(map(r => r.answer));
+  }
+
+  getMe(): Observable<PharmaceuticalDirectorMeResponse> {
+    return this.http.get<ApiResponse<PharmaceuticalDirectorMeResponse>>(`${this.base}/me`)
+      .pipe(map(r => r.answer));
+  }
+
+  register(body: {
+    name: string; lastname: string;
+    document: { number: string; type: string } | null;
+    email: string | null; phone: any | null;
+    password: string; info: string;
+  }): Observable<PharmaceuticalDirectorMeResponse> {
+    return this.http.post<ApiResponse<PharmaceuticalDirectorMeResponse>>(`${this.base}/register`, body)
       .pipe(map(r => r.answer));
   }
 
