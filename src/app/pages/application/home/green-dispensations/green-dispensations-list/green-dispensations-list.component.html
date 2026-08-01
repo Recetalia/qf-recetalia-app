@@ -17,7 +17,12 @@
     </ng-template>
     <ng-template pTemplate="body" let-r>
       <tr class="back_green">
-        <td>{{ r.prescriptionCode }}</td>
+        <td>
+          {{ r.prescriptionCode }}
+          <div *ngIf="r.prescriptionPaperNumber" class="text-muted small">
+            Nº {{ r.prescriptionPaperNumber }}
+          </div>
+        </td>
         <td>{{ r.patientName }} {{ r.patientLastName }}</td>
         <td>{{ r.medicName }} {{ r.medicLastname }}</td>
         <td>{{ r.dispensationProductName }}</td>
