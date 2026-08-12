@@ -53,7 +53,7 @@ export class LoginComponent {
           if (isPlatformBrowser(this.platformId)) {
             localStorage.setItem('qf_email', email);
           }
-          this.router.navigate(['/change-password']);
+          this.router.navigate(['/registro']);
         } else {
           this.router.navigate(['']);
         }

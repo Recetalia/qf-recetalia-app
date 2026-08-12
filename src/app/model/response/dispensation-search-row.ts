@@ -17,6 +17,10 @@ export interface DispensationSearchRow {
   prescriptionDose: number | null;
   prescriptionDuration: number | null;
   prescriptionDurationUnit: string | null;
+  /** Nº de talonario de la receta verde en papel. Ausente en las emitidas por Recetalia. */
+  prescriptionPaperNumber?: string | null;
+  /** DIGITAL | PAPER */
+  prescriptionOrigin?: string | null;
 
   // Patient
   patientId: string;

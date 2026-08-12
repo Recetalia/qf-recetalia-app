@@ -1,0 +1,110 @@
+<div class="container mt-4 mb-5" style="max-width: 720px;">
+
+  <div *ngIf="loading" class="text-center py-5">Cargando tus datos…</div>
+
+  <ng-container *ngIf="!loading">
+
+    <h3>Completá tu registro</h3>
+    <p class="text-muted" *ngIf="!enRevision">
+      Es tu primer ingreso. Verificá tus datos, mirá las farmacias que te declararon
+      Director Técnico y definí tu contraseña.
+    </p>
+
+    <!-- CJP en revisión: no puede registrarse hasta que Gestión cure el dato -->
+    <div *ngIf="enRevision" class="alert alert-warning">
+      <strong>Tu registro está en revisión.</strong><br>
+      El CJP {{ me?.cjp }} figura con más de un titular entre las farmacias que lo declararon,
+      así que todavía no podemos confirmar tu identidad. Contactate con Recetalia para
+      habilitarlo.
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <h5 class="mt-4">Tus datos</h5>
+
+      <div class="mb-3">
+        <label class="form-label">CJP</label>
+        <input type="text" class="form-control" [value]="me?.cjp" disabled>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" class="form-control" formControlName="name">
+        <div *ngIf="f['name'].touched && f['name'].invalid" class="text-danger">
+          <p>El nombre es necesario.</p>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Apellido</label>
+        <input type="text" class="form-control" formControlName="lastname">
+        <div *ngIf="f['lastname'].touched && f['lastname'].invalid" class="text-danger">
+          <p>El apellido es necesario.</p>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Documento</label>
+        <select class="form-select mb-2" formControlName="documentType">
+          <option value="UY">Cédula UY</option>
+          <option value="AR">Cédula AR</option>
+          <option value="PASSPORT">Pasaporte</option>
+          <option value="RUT">RUT</option>
+          <option value="OTHER">Otro</option>
+        </select>
+        <input type="text" class="form-control" formControlName="documentNumber"
+               placeholder="Número de documento">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Email de contacto</label>
+        <input type="email" class="form-control" formControlName="email"
+               placeholder="tu@email.com">
+        <div *ngIf="f['email'].touched && f['email'].invalid" class="text-danger">
+          <p>El email no parece válido.</p>
+        </div>
+      </div>
+
+      <h5 class="mt-4">Farmacias que te declararon Director Técnico</h5>
+      <ul class="list-group mb-3" *ngIf="pharmacies.length">
+        <li class="list-group-item" *ngFor="let p of pharmacies">
+          <strong>{{ p.name }}</strong>
+          <span class="text-muted" *ngIf="p.addressStreet">
+            — {{ p.addressStreet }} {{ p.addressNumber }}
+          </span>
+        </li>
+      </ul>
+      <div class="alert alert-secondary" *ngIf="!pharmacies.length">
+        Todavía no hay farmacias asociadas a tu CJP.
+      </div>
+
+      <h5 class="mt-4">Tu contraseña</h5>
+      <p class="text-muted">
+        Definí una contraseña propia. La que te asignó Recetalia deja de funcionar.
+      </p>
+
+      <div class="mb-3">
+        <input type="password" class="form-control" placeholder="Nueva contraseña"
+               formControlName="password">
+        <div *ngIf="f['password'].touched && f['password'].invalid" class="text-danger">
+          <p>Mínimo 6 caracteres.</p>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <input type="password" class="form-control" placeholder="Repetí la contraseña"
+               formControlName="confirm">
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+      <div class="text-center mt-4">
+        <button type="submit" class="btn btn-primary"
+                [disabled]="enRevision || saving || form.invalid">
+          {{ saving ? 'Guardando…' : 'Completar registro' }}
+        </button>
+      </div>
+
+    </form>
+  </ng-container>
+</div>

@@ -1,16 +1,16 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ChangePasswordComponent } from './change-password.component';
-import { ChangePasswordRoutingModule } from './change-password-routing.module';
+import { RegistroComponent } from './registro.component';
+import { RegistroRoutingModule } from './registro-routing.module';
 
 @NgModule({
-  declarations: [ChangePasswordComponent],
+  declarations: [RegistroComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ChangePasswordRoutingModule
+    RegistroRoutingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class ChangePasswordModule { }
+export class RegistroModule { }
