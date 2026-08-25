@@ -28,6 +28,22 @@ export class AuthService {
     );
   }
 
+  /**
+   * Define la clave usando el token del link de invitación, sin sesión previa.
+   *
+   * La clave va EN CLARO y no cifrada AES como en el login: /reset-password no descifra
+   * (no hay `info` con el que armar la clave, porque el usuario todavía no existe para el
+   * front). Viaja sobre TLS, y el token de un solo uso es lo que autoriza la operación.
+   *
+   * Devuelve el `username`: el QF entra como `{cjp}@qf.recetalia.com`, una dirección
+   * sintética que nunca vio. Sin esto define la clave y queda trabado en el login.
+   */
+  resetPasswordWithToken(token: string, newPassword: string): Observable<{ message: string; username: string }> {
+    return this.http.post<{ status: string; answer: { message: string; username: string } }>(
+      `${this.securityApiRecetaliaUrl}/reset-password`, { token, newPassword }
+    ).pipe(map(r => r.answer));
+  }
+
   renewPassword(email: string, encryptedPassword: string, info: string): Observable<any> {
     // El endpoint valida @NotBlank sobre TODO el UserRequest (username/role/applicationApiKey),
     // aunque el servicio solo use email+password. Se completan para pasar la validación (si no, 500).

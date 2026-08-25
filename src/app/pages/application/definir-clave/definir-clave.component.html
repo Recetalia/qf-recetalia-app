@@ -1,0 +1,32 @@
+<div class="definir-clave-wrap">
+  <div class="card">
+    <h1>Definí tu clave</h1>
+    <p class="subtitle">
+      Ya podés entrar a Recetalia como Químico Farmacéutico. Elegí la clave con la que vas a
+      ingresar.
+    </p>
+
+    <div *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!username">
+      <label for="password">Clave</label>
+      <input id="password" type="password" formControlName="password" class="form-control"
+             autocomplete="new-password" />
+      <small *ngIf="f['password'].touched && f['password'].invalid" class="text-danger">
+        Mínimo 6 caracteres.
+      </small>
+
+      <label for="confirm">Repetí la clave</label>
+      <input id="confirm" type="password" formControlName="confirm" class="form-control"
+             autocomplete="new-password" />
+
+      <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="saving">
+        {{ saving ? 'Guardando…' : 'Definir clave y entrar' }}
+      </button>
+    </form>
+
+    <p *ngIf="username" class="text-muted mt-3">
+      Tu usuario es <strong>{{ username }}</strong>. Anotalo: es con el que vas a entrar.
+    </p>
+  </div>
+</div>
