@@ -1,0 +1,56 @@
+<div class="validar-wrap">
+  <div class="card">
+    <h1>Confirmá tus farmacias</h1>
+    <p class="subtitle">
+      Estas farmacias te declararon como su Químico Farmacéutico responsable. Confirmá las que
+      te corresponden y rechazá las que no: sos responsable legal de las que aceptes.
+    </p>
+
+    <div *ngIf="error" class="alert alert-danger" role="alert">{{ error }}</div>
+    <div *ngIf="loading" class="text-muted">Cargando…</div>
+
+    <div *ngIf="!loading && rows.length === 0" class="text-muted">
+      No hay ninguna farmacia que te declare como responsable.
+    </div>
+
+    <table class="table align-middle" *ngIf="!loading && rows.length">
+      <thead>
+        <tr>
+          <th>Farmacia</th>
+          <th>Dirección</th>
+          <th style="width:16rem"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td><strong>{{ row.name }}</strong></td>
+          <td class="text-muted">{{ row.address || '—' }}</td>
+          <td class="text-nowrap">
+            <button type="button" class="btn btn-sm me-1"
+              [class.btn-success]="chosen(row.pharmacyId) === 'ACCEPTED'"
+              [class.btn-outline-success]="chosen(row.pharmacyId) !== 'ACCEPTED'"
+              (click)="choose(row.pharmacyId, 'ACCEPTED')">
+              Es mía
+            </button>
+            <button type="button" class="btn btn-sm"
+              [class.btn-danger]="chosen(row.pharmacyId) === 'REJECTED'"
+              [class.btn-outline-danger]="chosen(row.pharmacyId) !== 'REJECTED'"
+              (click)="choose(row.pharmacyId, 'REJECTED')">
+              No es mía
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!loading && rechazadas > 0" class="text-muted small">
+      Vamos a avisarle a Recetalia de {{ rechazadas === 1 ? 'la farmacia que rechazaste' : 'las ' + rechazadas + ' farmacias que rechazaste' }}.
+    </p>
+
+    <button *ngIf="!loading && rows.length" type="button" class="btn btn-primary w-100 mt-3"
+      [disabled]="pendientes > 0 || saving" (click)="onConfirm()">
+      <ng-container *ngIf="pendientes > 0">Te faltan responder {{ pendientes }}</ng-container>
+      <ng-container *ngIf="pendientes === 0">{{ saving ? 'Guardando…' : 'Confirmar' }}</ng-container>
+    </button>
+  </div>
+</div>

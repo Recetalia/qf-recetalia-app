@@ -7,6 +7,7 @@ import { Page } from '../model/page';
 import { PharmacyResponse } from '../model/response/pharmacy-response';
 import { DispensationSearchRow } from '../model/response/dispensation-search-row';
 import { PharmaceuticalDirectorMeResponse } from '../model/response/pharmaceutical-director-me-response';
+import { QfPharmacyReviewRow } from '../model/response/qf-pharmacy-review-row';
 
 @Injectable({ providedIn: 'root' })
 export class PharmaceuticalDirectorService {
@@ -42,6 +43,25 @@ export class PharmaceuticalDirectorService {
     password: string; info: string;
   }): Observable<PharmaceuticalDirectorMeResponse> {
     return this.http.post<ApiResponse<PharmaceuticalDirectorMeResponse>>(`${this.base}/register`, body)
+      .pipe(map(r => r.answer));
+  }
+
+  /**
+   * Las farmacias que declaran a este QF, con su decisión. `decision === null` = pendiente.
+   * Es lo que mira el guard para saber si tiene que bloquearlo en la pantalla de validación.
+   */
+  getMyPharmaciesToReview(): Observable<QfPharmacyReviewRow[]> {
+    return this.http.get<ApiResponse<QfPharmacyReviewRow[]>>(`${this.base}/my-pharmacies`)
+      .pipe(map(r => r.answer));
+  }
+
+  /**
+   * Manda la tanda entera de decisiones. Una sola llamada y no una por farmacia: las
+   * rechazadas se avisan a Recetalia con UN mail que las lista, y eso se arma del lado del
+   * backend con la tanda completa.
+   */
+  decidePharmacies(decisions: { pharmacyId: string; decision: 'ACCEPTED' | 'REJECTED' }[]): Observable<number> {
+    return this.http.post<ApiResponse<number>>(`${this.base}/my-pharmacies/decisions`, decisions)
       .pipe(map(r => r.answer));
   }
 
