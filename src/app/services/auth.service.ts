@@ -23,6 +23,7 @@ export class AuthService {
       tap((response: AuthResponse) => {
         this.setToken(response.answer.token);
         this.setRole(response.answer.role);
+        this.setMustChangePassword(response.answer.mustChangePassword === true);
       }),
       map((response: AuthResponse) => response.answer)
     );
@@ -99,9 +100,31 @@ export class AuthService {
     localStorage.setItem('role', role);
   }
 
+  /**
+   * Si el usuario todavía tiene que elegir una clave propia.
+   *
+   * Se persiste porque NO viaja en el JWT (sus claims son sub/mail/role/iat/exp): sólo viene
+   * en la respuesta del login, y sin guardarlo se pierde al recargar. Lo consume la pantalla
+   * de registro para decidir si pide la contraseña — el QF que llegó por el link de
+   * invitación ya la definió, y volver a pedírsela lo hace definir dos veces lo mismo.
+   */
+  setMustChangePassword(must: boolean): void {
+    localStorage.setItem('mustChangePassword', must ? 'true' : 'false');
+  }
+
+  mustChangePassword(): boolean {
+    if (isPlatformBrowser(this.platformId)) {
+      // Ausente = no se sabe. Se asume que SÍ: pedirla de más es molesto, no pedirla cuando
+      // hacía falta deja al usuario con la clave que le pasaron por fuera del sistema.
+      return localStorage.getItem('mustChangePassword') !== 'false';
+    }
+    return true;
+  }
+
   clearToken(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('mustChangePassword');
     this.tokenSubject.next(null);
   }
 

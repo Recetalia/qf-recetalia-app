@@ -40,7 +40,9 @@ export class PharmaceuticalDirectorService {
     name: string; lastname: string;
     document: { number: string; type: string } | null;
     email: string | null; phone: any | null;
-    password: string; info: string;
+    // null cuando el QF ya definió su clave por el link de invitación: el backend, si no
+    // viene, no la toca.
+    password: string | null; info: string | null;
   }): Observable<PharmaceuticalDirectorMeResponse> {
     return this.http.post<ApiResponse<PharmaceuticalDirectorMeResponse>>(`${this.base}/register`, body)
       .pipe(map(r => r.answer));
