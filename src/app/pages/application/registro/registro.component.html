@@ -78,23 +78,28 @@
         Todavía no hay farmacias asociadas a tu CJP.
       </div>
 
-      <h5 class="mt-4">Tu contraseña</h5>
-      <p class="text-muted">
-        Definí una contraseña propia. La que te asignó Recetalia deja de funcionar.
-      </p>
+      <!-- Sólo si todavía tiene que elegir una clave propia. El QF que llegó por el link de
+           invitación ya la definió en /definir-clave: pedírsela de nuevo lo mandaba a definir
+           la que acababa de definir. -->
+      <ng-container *ngIf="pideClave">
+        <h5 class="mt-4">Tu contraseña</h5>
+        <p class="text-muted">
+          Definí una contraseña propia. La que te asignó Recetalia deja de funcionar.
+        </p>
 
-      <div class="mb-3">
-        <input type="password" class="form-control" placeholder="Nueva contraseña"
-               formControlName="password">
-        <div *ngIf="f['password'].touched && f['password'].invalid" class="text-danger">
-          <p>Mínimo 6 caracteres.</p>
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Nueva contraseña"
+                 formControlName="password">
+          <div *ngIf="f['password'].touched && f['password'].invalid" class="text-danger">
+            <p>Mínimo 6 caracteres.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="mb-3">
-        <input type="password" class="form-control" placeholder="Repetí la contraseña"
-               formControlName="confirm">
-      </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Repetí la contraseña"
+                 formControlName="confirm">
+        </div>
+      </ng-container>
 
       <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
 

@@ -25,6 +25,16 @@ export class RegistroComponent implements OnInit {
   /** El CJP figura con más de un titular: no es una identidad y no puede registrarse. */
   enRevision = false;
 
+  /**
+   * Si hay que pedirle la contraseña acá.
+   *
+   * Hay dos formas de llegar a esta pantalla: con una clave que le asignó Gestión (y este es
+   * el momento de cambiarla), o desde el link de invitación, donde YA la definió en
+   * /definir-clave. En el segundo caso pedírsela otra vez lo mandaba a definir la que acababa
+   * de definir — visto en producción el 2026-08-27.
+   */
+  pideClave = true;
+
   constructor(
     private fb: FormBuilder,
     private pd: PharmaceuticalDirectorService,
@@ -43,6 +53,16 @@ export class RegistroComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirm: ['', [Validators.required, Validators.minLength(6)]],
     });
+
+    this.pideClave = this.authService.mustChangePassword();
+    if (!this.pideClave) {
+      // Sacar los validadores además de ocultar los campos: un `required` sobre un input que
+      // no se muestra deja el botón muerto sin nada visible que lo explique.
+      ['password', 'confirm'].forEach(c => {
+        this.form.get(c)?.clearValidators();
+        this.form.get(c)?.updateValueAndValidity();
+      });
+    }
 
     this.pd.getMe().subscribe({
       next: (me) => {
@@ -79,7 +99,7 @@ export class RegistroComponent implements OnInit {
       return;
     }
     const v = this.form.value;
-    if (v.password !== v.confirm) {
+    if (this.pideClave && v.password !== v.confirm) {
       this.error = 'Las contraseñas no coinciden';
       return;
     }
@@ -92,8 +112,9 @@ export class RegistroComponent implements OnInit {
       document: v.documentNumber ? { number: v.documentNumber, type: v.documentType } : null,
       email: v.email || null,
       phone: null,
-      password: encryptPassword(v.password, info),
-      info,
+      // Sin clave cuando ya la definió por el link: mandarla vacía se la pisaría.
+      password: this.pideClave ? encryptPassword(v.password, info) : null,
+      info: this.pideClave ? info : null,
     }).subscribe({
       next: () => {
         // La clave cambió: el token viejo ya no sirve, hay que volver a entrar.
