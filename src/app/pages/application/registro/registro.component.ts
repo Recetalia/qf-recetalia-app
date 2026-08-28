@@ -5,8 +5,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../../services/auth.service';
 import { PharmaceuticalDirectorService } from '../../../services/pharmaceutical-director.service';
 import { PharmaceuticalDirectorMeResponse } from '../../../model/response/pharmaceutical-director-me-response';
-import { PharmacyResponse } from '../../../model/response/pharmacy-response';
 import { generateDynamicInfo, encryptPassword } from '../../../shared/utils/crypto.util';
+import { toPhonePayload } from '../../../shared/utils/phone-payload.util';
 
 @Component({
   selector: 'app-registro',
@@ -17,7 +17,6 @@ export class RegistroComponent implements OnInit {
 
   form!: FormGroup;
   me: PharmaceuticalDirectorMeResponse | null = null;
-  pharmacies: PharmacyResponse[] = [];
   loading = true;
   saving = false;
   error: string | null = null;
@@ -50,6 +49,7 @@ export class RegistroComponent implements OnInit {
       documentType: ['UY'],
       documentNumber: [''],
       email: ['', Validators.email],
+      phone: [''],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirm: ['', [Validators.required, Validators.minLength(6)]],
     });
@@ -67,7 +67,6 @@ export class RegistroComponent implements OnInit {
     this.pd.getMe().subscribe({
       next: (me) => {
         this.me = me;
-        this.pharmacies = me.pharmacies ?? [];
         this.enRevision = me.status === 'NEEDS_REVIEW';
 
         // Los datos vienen de lo que cargó la farmacia; el QF los verifica y corrige.
@@ -77,6 +76,8 @@ export class RegistroComponent implements OnInit {
           documentType: me.document?.type ?? 'UY',
           documentNumber: me.document?.number ?? '',
           email: me.email ?? '',
+          // El celular puede venir de lo que declaró la farmacia al darlo de alta.
+          phone: me.phone?.international ?? '',
         });
 
         if (this.enRevision) { this.form.disable(); }
@@ -111,7 +112,7 @@ export class RegistroComponent implements OnInit {
       lastname: v.lastname,
       document: v.documentNumber ? { number: v.documentNumber, type: v.documentType } : null,
       email: v.email || null,
-      phone: null,
+      phone: toPhonePayload(v.phone),
       // Sin clave cuando ya la definió por el link: mandarla vacía se la pisaría.
       password: this.pideClave ? encryptPassword(v.password, info) : null,
       info: this.pideClave ? info : null,
