@@ -31,6 +31,18 @@ export class PharmaceuticalDirectorService {
       .pipe(map(r => r.answer));
   }
 
+  /**
+   * «Olvidé mi contraseña»: pide que le manden el link a su correo declarado.
+   *
+   * Público, sin token. El backend responde lo mismo exista o no el CJP —si contestara
+   * distinto sería un enumerador del padrón—, así que acá no hay nada que distinguir: se
+   * muestra siempre el mismo mensaje.
+   */
+  forgotPassword(cjp: string): Observable<string> {
+    return this.http.post<ApiResponse<string>>(`${this.base}/forgot-password`, { cjp })
+      .pipe(map(r => r.answer));
+  }
+
   getMe(): Observable<PharmaceuticalDirectorMeResponse> {
     return this.http.get<ApiResponse<PharmaceuticalDirectorMeResponse>>(`${this.base}/me`)
       .pipe(map(r => r.answer));

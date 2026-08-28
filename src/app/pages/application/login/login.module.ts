@@ -1,8 +1,10 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login.component';
+import { RecuperarClaveComponent } from './recuperar-clave/recuperar-clave.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginRoutingModule } from './login-routing.module';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,10 +15,11 @@ import { AppComponent } from '../../../app.component';
 import { PasswordModule } from 'primeng/password';
 
 @NgModule({
-  declarations: [LoginComponent],
+  declarations: [LoginComponent, RecuperarClaveComponent],
   imports: [
     CommonModule,
     LoginRoutingModule,
+    RouterModule,
     ReactiveFormsModule,
     MatCardModule,
     MatFormFieldModule,

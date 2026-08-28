@@ -1,0 +1,28 @@
+<div class="recuperar-wrap">
+  <div class="card">
+    <h1>Recuperar contraseña</h1>
+
+    <ng-container *ngIf="!mensaje">
+      <p class="subtitle">
+        Ingresá tu CJP y te mandamos un link al correo que tenés declarado para que definas una
+        clave nueva.
+      </p>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <label for="cjp">CJP</label>
+        <input id="cjp" type="text" class="form-control" formControlName="cjp" autocomplete="off">
+        <small *ngIf="form.get('cjp')?.touched && form.get('cjp')?.invalid" class="text-danger">
+          Ingresá tu CJP.
+        </small>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="saving">
+          {{ saving ? 'Enviando…' : 'Enviarme el link' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <div *ngIf="mensaje" class="alert alert-success">{{ mensaje }}</div>
+
+    <a routerLink="/login" class="d-block text-center mt-3">Volver al ingreso</a>
+  </div>
+</div>
