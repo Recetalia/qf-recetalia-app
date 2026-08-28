@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
-import { generateDynamicInfo, encryptPassword } from '../../../shared/utils/crypto.util';
 
 /**
  * Pantalla a la que llega el Químico Farmacéutico desde el link del mail de invitación.
@@ -68,17 +67,18 @@ export class DefinirClaveComponent implements OnInit {
     this.auth.resetPasswordWithToken(this.token, password).subscribe({
       next: (res) => {
         this.username = res.username;
-        // Login automático con la clave recién definida: el QF no conoce su usuario, así que
-        // mandarlo al login a adivinarlo lo dejaría trabado justo al final del alta.
-        const info = generateDynamicInfo();
-        this.auth.login(res.username, encryptPassword(password, info), info).subscribe({
-          next: () => this.router.navigate(['/registro']),
-          error: () => {
-            // La clave SÍ quedó definida: el reset ya devolvió 200. Que falle el login no
-            // puede leerse como "no funcionó", o el QF va a pedir otro link.
-            this.saving = false;
-            this.error = `Tu clave quedó definida. Entrá con el usuario ${res.username}.`;
-          }
+        // Al LOGIN, no al registro.
+        //
+        // Antes esto hacía login automático y encadenaba a /registro, que sirve para el que
+        // entra por primera vez pero es un error para el que sólo recuperó su clave: a un QF
+        // ya registrado le aparecía "Completá tu registro — Es tu primer ingreso".
+        //
+        // Mandarlo al login sirve para los dos casos, porque la bifurcación ya la resuelve
+        // `registeredGuard` al entrar: si nunca completó el registro lo lleva ahí, y si ya lo
+        // hizo va directo a la app. Se le pasa el usuario para que no tenga que adivinarlo:
+        // es {cjp}@qf.recetalia.com, derivado de su matrícula, y nunca lo vio.
+        this.router.navigate(['/login'], {
+          queryParams: { usuario: res.username, clave: 'definida' },
         });
       },
       error: (err) => {

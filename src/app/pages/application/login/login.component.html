@@ -24,6 +24,8 @@
         </div>
       </div>
 
+      <div *ngIf="aviso" class="alert alert-success">{{ aviso }}</div>
+
       <div *ngIf="error" class="text-danger mb-1">
         {{ error }}
       </div>
