@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, PLATFORM_ID, Inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -22,10 +22,26 @@ export class LoginComponent {
   @Input() error: string | null = null;
   @Output() submitEM = new EventEmitter();
 
-  constructor(private authService: AuthService, private router: Router, private _snackBar: MatSnackBar, @Inject(PLATFORM_ID) private platformId: Object) {
+  /** Mensaje de éxito (no de error) — p. ej. al volver de definir la clave. */
+  aviso: string | null = null;
+
+  constructor(private authService: AuthService, private router: Router, private _snackBar: MatSnackBar,
+              private route: ActivatedRoute, @Inject(PLATFORM_ID) private platformId: Object) {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem("token");
       localStorage.removeItem("role");
+      // La sesión anterior quedó con la clave vieja: al volver de definir una nueva hay que
+      // limpiar también este flag, o el registro decidiría con el dato del login anterior.
+      localStorage.removeItem("mustChangePassword");
+    }
+
+    // Vuelve de definir su clave por el link. Se le prellena el CJP y se le avisa, en vez de
+    // dejarlo frente a un formulario vacío sin saber si la operación funcionó.
+    const params = this.route.snapshot.queryParamMap;
+    if (params.get('clave') === 'definida') {
+      const cjp = params.get('cjp');
+      if (cjp) { this.ngForm.get('cjp')?.setValue(cjp); }
+      this.aviso = 'Tu clave quedó definida. Ingresá con ella para entrar.';
     }
   }
 
