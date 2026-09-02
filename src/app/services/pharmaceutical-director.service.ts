@@ -61,6 +61,19 @@ export class PharmaceuticalDirectorService {
   }
 
   /**
+   * «Mi Perfil»: el QF corrige su propio contacto. El CJP no viaja — sale del token.
+   *
+   * No es el `/pharmaceutical-directors/{cjp}/contact` de Gestión: ese exige rol de Gestión y
+   * toma el CJP de la URL, así que serviría para editarle el contacto a cualquier otro.
+   *
+   * Devuelve el `me` ya actualizado para no tener que volver a pedirlo.
+   */
+  updateMyContact(email: string, phone: any | null): Observable<PharmaceuticalDirectorMeResponse> {
+    return this.http.post<ApiResponse<PharmaceuticalDirectorMeResponse>>(
+      `${this.base}/me/contact`, { email, phone }).pipe(map(r => r.answer));
+  }
+
+  /**
    * Las farmacias que declaran a este QF, con su decisión. `decision === null` = pendiente.
    * Es lo que mira el guard para saber si tiene que bloquearlo en la pantalla de validación.
    */

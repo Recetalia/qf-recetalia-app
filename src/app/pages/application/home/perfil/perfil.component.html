@@ -1,0 +1,60 @@
+<div class="container mt-4" style="max-width: 40rem">
+  <h4>Mi perfil</h4>
+
+  <div *ngIf="loading" class="text-center py-5">Cargando tus datos…</div>
+
+  <ng-container *ngIf="!loading">
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+    <!--
+      Identidad: se muestra pero no se edita. Sale del padrón y de lo que declararon las
+      farmacias, y es la ficha del que firma las recetas verdes.
+    -->
+    <div class="card mb-3" *ngIf="me">
+      <div class="card-body py-3">
+        <div class="row">
+          <div class="col-sm-4"><small class="text-muted">CJP</small><div>{{ me.cjp }}</div></div>
+          <div class="col-sm-8">
+            <small class="text-muted">Nombre</small>
+            <div>{{ me.name }} {{ me.lastname }}</div>
+          </div>
+        </div>
+        <div class="row mt-2" *ngIf="me.document?.number">
+          <div class="col-sm-12">
+            <small class="text-muted">Documento</small>
+            <div>{{ me.document?.type }} {{ me.document?.number }}</div>
+          </div>
+        </div>
+        <small class="text-muted d-block mt-2">
+          Si alguno de estos datos está mal, escribinos: los verificamos contra el padrón.
+        </small>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label class="form-label">Email de contacto</label>
+        <input type="email" class="form-control" formControlName="email"
+               placeholder="tu@email.com">
+        <div *ngIf="f['email'].touched && f['email'].invalid" class="text-danger">
+          <p *ngIf="f['email'].errors?.['required']">
+            El email es obligatorio: es por donde recuperás tu clave.
+          </p>
+          <p *ngIf="f['email'].errors?.['email']">El email no parece válido.</p>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Celular</label>
+        <angular-phone-number-input formControlName="phone" [defaultCountry]="'UY'"
+          [preferredCountries]="['UY', 'AR', 'CO', 'PE', 'MX']">
+        </angular-phone-number-input>
+      </div>
+
+      <button type="submit" class="btn btn-success" [disabled]="saving">
+        {{ saving ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    </form>
+  </ng-container>
+</div>
