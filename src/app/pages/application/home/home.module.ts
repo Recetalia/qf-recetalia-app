@@ -8,6 +8,8 @@ import { HeaderComponent } from './components/header/header.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { PharmacyListComponent } from './pharmacies/pharmacy-list/pharmacy-list.component';
 import { GreenDispensationsListComponent } from './green-dispensations/green-dispensations-list/green-dispensations-list.component';
+import { PerfilComponent } from './perfil/perfil.component';
+import { AngularPhoneNumberInput } from 'angular-phone-number-input';
 
 import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
@@ -20,6 +22,7 @@ import { ButtonModule } from 'primeng/button';
     SidebarComponent,
     PharmacyListComponent,
     GreenDispensationsListComponent,
+    PerfilComponent,
   ],
   imports: [
     CommonModule,
@@ -29,6 +32,7 @@ import { ButtonModule } from 'primeng/button';
     TableModule,
     CalendarModule,
     ButtonModule,
+    AngularPhoneNumberInput,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })

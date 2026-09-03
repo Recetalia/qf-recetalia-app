@@ -7,6 +7,7 @@ import { PharmaceuticalDirectorService } from '../../../services/pharmaceutical-
 import { PharmaceuticalDirectorMeResponse } from '../../../model/response/pharmaceutical-director-me-response';
 import { generateDynamicInfo, encryptPassword } from '../../../shared/utils/crypto.util';
 import { toPhonePayload } from '../../../shared/utils/phone-payload.util';
+import { toPhoneInput } from '../../../shared/utils/phone-input.util';
 
 @Component({
   selector: 'app-registro',
@@ -76,8 +77,10 @@ export class RegistroComponent implements OnInit {
           documentType: me.document?.type ?? 'UY',
           documentNumber: me.document?.number ?? '',
           email: me.email ?? '',
-          // El celular puede venir de lo que declaró la farmacia al darlo de alta.
-          phone: me.phone?.international ?? '',
+          // El celular puede venir de lo que declaró la farmacia al darlo de alta. Va por
+          // `toPhoneInput` y no crudo: el widget lo mete en un `<input type="number">`, que
+          // descarta el número formateado con espacios y deja el campo vacío.
+          phone: toPhoneInput(me.phone),
         });
 
         if (this.enRevision) { this.form.disable(); }
