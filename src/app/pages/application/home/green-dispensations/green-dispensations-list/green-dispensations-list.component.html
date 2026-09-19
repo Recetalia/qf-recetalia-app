@@ -4,7 +4,10 @@
   </a>
   <h4 *ngIf="pharmacyName">{{ pharmacyName }} — recetas verdes dispensadas</h4>
   <h4 *ngIf="!pharmacyName">Recetas verdes dispensadas</h4>
-  <div class="d-flex align-items-center gap-2 mb-3">
+  <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+    <input type="text" class="form-control" style="max-width: 280px;"
+           placeholder="Buscar (codigo, paciente...)"
+           (input)="onContainsInput($any($event.target).value)" />
     <p-calendar [(ngModel)]="rangeDates" selectionMode="range" dateFormat="dd/mm/yy"
                 placeholder="Rango de fechas" [showButtonBar]="true"></p-calendar>
     <button class="btn btn-primary btn-sm" (click)="applyFilter()">Filtrar</button>
@@ -13,7 +16,7 @@
            [paginator]="true" [rows]="pageSize" [totalRecords]="totalRecords" [rowsPerPageOptions]="[10,25,50]">
     <ng-template pTemplate="header">
       <tr><th>Código</th><th>Paciente</th><th>Médico</th><th>Medicamento</th>
-          <th>Fecha disp.</th><th>Control D.T.</th></tr>
+          <th>Cantidad</th><th>Fecha disp.</th><th>Control D.T.</th></tr>
     </ng-template>
     <ng-template pTemplate="body" let-r>
       <tr class="back_green">
@@ -23,9 +26,16 @@
             Nº {{ r.prescriptionPaperNumber }}
           </div>
         </td>
-        <td>{{ r.patientName }} {{ r.patientLastName }}</td>
+        <td>
+          {{ r.patientName }} {{ r.patientLastName }}
+          <br *ngIf="r.patientDocument">
+          <small *ngIf="r.patientDocument" class="text-muted">
+            {{ r.patientDocument | document:'type' }} {{ r.patientDocument | document:'number' }}
+          </small>
+        </td>
         <td>{{ r.medicName }} {{ r.medicLastname }}</td>
         <td>{{ r.dispensationProductName }}</td>
+        <td>{{ r.dispensationQty }} {{ r.dispensationQty === 1 ? 'caja' : 'cajas' }}</td>
         <td>{{ (r.dispensationUpdatedAt || r.dispensationCreatedAt) | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>
           <span *ngIf="r.dtControlAt" class="text-success">
@@ -38,6 +48,6 @@
         </td>
       </tr>
     </ng-template>
-    <ng-template pTemplate="emptymessage"><tr><td colspan="6">Sin recetas verdes dispensadas en el período.</td></tr></ng-template>
+    <ng-template pTemplate="emptymessage"><tr><td colspan="7">Sin recetas verdes dispensadas en el período.</td></tr></ng-template>
   </p-table>
 </div>
