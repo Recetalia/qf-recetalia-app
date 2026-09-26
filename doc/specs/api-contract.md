@@ -23,6 +23,30 @@ Also calls [PharmacyService.getByEmail](#pharmacyservice-srcappservicespharmacys
 
 ---
 
+## [PharmaceuticalDirectorService](../../src/app/services/pharmaceutical-director.service.ts)
+
+Base: `${API}/pharmaceutical-director` (**singular** — el plural es el de Gestión y exige
+`ROLE_MANAGEMENT`). Auth required (Bearer), salvo donde se aclara.
+
+| HTTP | Path | Response | Notes |
+|------|------|----------|-------|
+| `GET` | `/me` | `PharmaceuticalDirectorMeResponse` | Datos del QF del token + sus farmacias. |
+| `POST` | `/me/contact` | `PharmaceuticalDirectorMeResponse` | **«Mi Perfil»**. Body `{ email, phone }`. El CJP no viaja: sale del token. El `email` es obligatorio — es la única vía de recuperar la clave. Devuelve el `me` ya actualizado. |
+| `POST` | `/register` | `PharmaceuticalDirectorMeResponse` | Primer ingreso. `password`/`info` van en `null` si ya la definió por el link de invitación. |
+| `GET` | `/pharmacies` | `PharmacyResponse[]` | |
+| `GET` | `/my-pharmacies` | `QfPharmacyReviewRow[]` | `decision: null` = pendiente. |
+| `POST` | `/my-pharmacies/decisions` | `number` | Tanda entera en una llamada. |
+| `GET` | `/green-dispensations` | `Page<DispensationSearchRow>` | Params `pharmacyId`, `startDate`, `endDate`, paginación. |
+| `POST` | `/dispensations/{id}/control` | `boolean` | |
+| `POST` | `/forgot-password` | `string` | **Sin token.** Body `{ cjp }`. Responde lo mismo exista o no el CJP: contestar distinto lo convertiría en un enumerador del padrón. |
+
+⚠️ **El resto de este documento está desactualizado**: describe los services de la app de
+Farmacias, de la que este repo salió por copia. Los `PharmacyService`, `PrescriptionService`,
+`DispensationService`, etc. de abajo no reflejan lo que esta app llama hoy. Verificado el
+2026-09-02 al agregar la sección de arriba; corregirlo entero es trabajo aparte.
+
+---
+
 ## [PharmacyService](../../src/app/services/pharmacy.service.ts)
 
 Base: `${API}/pharmacies`. Auth required (Bearer).
