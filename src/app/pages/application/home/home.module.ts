@@ -15,6 +15,8 @@ import { TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
 import { ButtonModule } from 'primeng/button';
 
+import { SharedMRAModule } from '../../../shared/sharedmra.module';
+
 @NgModule({
   declarations: [
     HomeComponent,
@@ -32,6 +34,8 @@ import { ButtonModule } from 'primeng/button';
     TableModule,
     CalendarModule,
     ButtonModule,
+    // Trae el DocPipe, que parte el JSON de patient.document en tipo y número.
+    SharedMRAModule,
     AngularPhoneNumberInput,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
