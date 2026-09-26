@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AppUpdateService } from './services/app-update.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'qf-recetalia-app';
+
+  constructor() {
+    // Sin esto el service worker seguía sirviendo la versión anterior después
+    // de cada deploy. Ver AppUpdateService.
+    inject(AppUpdateService).iniciar();
+  }
 }
