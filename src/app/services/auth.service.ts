@@ -7,6 +7,12 @@ import { environment } from '../../environments/environment';
 import { AuthResponse, Answer } from '../model/response/Auth-response';
 import { isPlatformBrowser } from '@angular/common';
 
+/**
+ * Rol principal que esta app le pide al login (security-api 2.7.1). A un usuario con varios roles
+ * le tocaba el primero del Set y, si no era el de esta app, api-rest le negaba el acceso (403).
+ */
+const PREFERRED_ROLES = ['ROLE_PHARMACEUTICAL_DIRECTOR'];
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,7 +25,7 @@ export class AuthService {
 
   login(email: string, password: string, info: string): Observable<Answer> {
 
-    return this.http.post<AuthResponse>(this.securityApiRecetaliaUrl + '/login', { email, password, info }).pipe(
+    return this.http.post<AuthResponse>(this.securityApiRecetaliaUrl + '/login', { email, password, info, preferredRoles: PREFERRED_ROLES }).pipe(
       tap((response: AuthResponse) => {
         this.setToken(response.answer.token);
         this.setRole(response.answer.role);
